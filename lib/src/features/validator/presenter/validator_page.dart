@@ -1,87 +1,245 @@
-import 'dart:developer';
-
+import 'package:desafio_model_view/src/constants/app_colors.dart';
+import 'package:desafio_model_view/src/constants/app_text_styles.dart';
 import 'package:desafio_model_view/src/features/validator/presenter/cubit/validator_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:validatorless/validatorless.dart';
 
-class ValidatorPage extends StatelessWidget {
+class ValidatorPage extends StatefulWidget {
   const ValidatorPage({super.key});
+
+  @override
+  State<ValidatorPage> createState() => _ValidatorPageState();
+}
+
+class _ValidatorPageState extends State<ValidatorPage> {
+  final emailEC = TextEditingController();
+  final passwordEC = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool obscureText = true;
+
+  @override
+  void dispose() {
+    emailEC.dispose();
+    passwordEC.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ValidatorCubit>();
-
-    final passwordEC = TextEditingController();
-
-    final formKey = GlobalKey<FormState>();
+    final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: BlocConsumer<ValidatorCubit, ValidatorState>(
-        bloc: cubit,
-        listener: (context, state) {
-          if (state is ValidatorError) {
-            showTopSnackBar(
-                Overlay.of(context),
-                CustomSnackBar.error(
-                    message: '${state.message}\n${state.errors}}'));
-          }
-
-          if (state is ValidatorServerError) {
-            showTopSnackBar(Overlay.of(context),
-                CustomSnackBar.error(message: state.message));
-          }
-
-          if (state is ValidatorSuccess) {
-            /* Navigator.push(
-                context, MaterialPageRoute(builder: (_) => ValidatorPage())); */
-            //TODO Trocar pela tela de sucesso
-
-            showTopSnackBar(Overlay.of(context),
-                CustomSnackBar.success(message: state.message));
-          }
-        },
-        builder: (context, state) {
-          return switch (state) {
-            ValidatorLoading() => const CircularProgressIndicator(),
-            ValidatorSuccess() => const CircularProgressIndicator(),
-            ValidatorError() => const CircularProgressIndicator(),
-            ValidatorServerError() => const CircularProgressIndicator(),
-            ValidatorInitial() => Column(
+      body: CustomScrollView(
+        physics: const ClampingScrollPhysics(),
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Form(
+              key: _formKey,
+              child: Column(
                 children: [
-                  const Text('Senha:'),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TextFormField(
-                      key: formKey,
-                      controller: passwordEC,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Password',
+                  Container(
+                    width: screenSize.width,
+                    height: 300,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/background.png'),
+                        fit: BoxFit.contain,
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                      color: Colors.black,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(100),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          blurStyle: BlurStyle.normal,
+                          color: Colors.black,
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(6, 6),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: screenSize.width,
+                    padding: const EdgeInsets.all(20),
+                    child: BlocConsumer<ValidatorCubit, ValidatorState>(
+                      bloc: cubit,
+                      listener: (context, state) {
+                        if (state is ValidatorError) {
+                          showTopSnackBar(
+                              Overlay.of(context),
+                              CustomSnackBar.error(
+                                  message:
+                                      '${state.message}\n${state.errors}}'));
                         }
-                        return null;
+
+                        if (state is ValidatorServerError) {
+                          showTopSnackBar(Overlay.of(context),
+                              CustomSnackBar.error(message: state.message));
+                        }
+
+                        if (state is ValidatorSuccess) {
+                          /* Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => ValidatorPage())); */
+                          //TODO Trocar pela tela de sucesso
+
+                          showTopSnackBar(Overlay.of(context),
+                              CustomSnackBar.success(message: state.message));
+                        }
+                      },
+                      builder: (context, state) {
+                        return switch (state) {
+                          ValidatorLoading() =>
+                            const Center(child: CircularProgressIndicator()),
+                          ValidatorSuccess() =>
+                            const Center(child: CircularProgressIndicator()),
+                          ValidatorError() =>
+                            const Center(child: CircularProgressIndicator()),
+                          ValidatorServerError() =>
+                            const Center(child: CircularProgressIndicator()),
+                          ValidatorInitial() => Column(
+                              children: [
+                                const SizedBox(
+                                  height: 100,
+                                ),
+                                SizedBox(
+                                  width: screenSize.width * .8,
+                                  child: TextFormField(
+                                    controller: emailEC,
+                                    validator: Validatorless.multiple([
+                                      Validatorless.required(
+                                          'Email obrigatório'),
+                                      Validatorless.email('Email inválido'),
+                                    ]),
+                                    decoration: InputDecoration(
+                                      hintText: 'Email',
+                                      filled: true,
+                                      fillColor: Colors.black.withOpacity(0.1),
+                                      prefixIcon: const Icon(Icons.email),
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey,
+                                          width: 1.0,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(12),
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.black.withOpacity(0.1),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(12),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                SizedBox(
+                                  width: screenSize.width * .8,
+                                  child: TextFormField(
+                                    controller: passwordEC,
+                                    validator: Validatorless.multiple([
+                                      Validatorless.required(
+                                          'Senha obrigatória'),
+                                      Validatorless.min(
+                                          8, 'Senha menor que 8 caracteres'),
+                                    ]),
+                                    obscureText: obscureText,
+                                    decoration: InputDecoration(
+                                      hintText: 'Senha',
+                                      filled: true,
+                                      fillColor: Colors.black.withOpacity(0.1),
+                                      prefixIcon: const Icon(Icons.key),
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            obscureText = !obscureText;
+                                          });
+                                        },
+                                        icon: Icon(
+                                          obscureText
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                        ),
+                                      ),
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey,
+                                          width: 1.0,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(12),
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.black.withOpacity(0.1),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(12),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 70,
+                                ),
+                                Container(
+                                  width: screenSize.width * .8,
+                                  decoration: BoxDecoration(
+                                    gradient: AppColors.gradient,
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(24),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        cubit.validator(
+                                            password: passwordEC.text);
+                                      }
+                                    },
+                                    child: Text(
+                                      'Entrar',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                        fontFamily:
+                                            TextStyles.instance.secondary,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        };
                       },
                     ),
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        cubit.validator(password: passwordEC.text);
-                      },
-                      child: const Text('Entrar'))
                 ],
               ),
-          };
-
-          /* return  */
-        },
+            ),
+          ),
+        ],
       ),
     );
   }
