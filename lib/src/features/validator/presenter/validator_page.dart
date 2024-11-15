@@ -195,6 +195,39 @@ class _ValidatorPageState extends State<ValidatorPage> {
                                     ),
                                   ),
                                 ),
+                                SizedBox(
+                                  width: screenSize.width * .8,
+                                  child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Sugestão de senha',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontFamily:
+                                                TextStyles.instance.secondary,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              passwordEC.text = '12345678';
+                                              obscureText = false;
+                                            });
+                                          },
+                                          child: Text(
+                                            'Clique aqui',
+                                            style: TextStyle(
+                                              color: AppColors.primaryColor,
+                                              fontSize: 16,
+                                              fontFamily:
+                                                  TextStyles.instance.secondary,
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                ),
                                 const SizedBox(
                                   height: 70,
                                 ),
@@ -233,6 +266,22 @@ class _ValidatorPageState extends State<ValidatorPage> {
                             ),
                         };
                       },
+                    ),
+                  ),
+                  const Expanded(
+                    child: SizedBox(
+                      height: 10,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '© Desafio model view - 2024',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: TextStyles.instance.secondary,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                 ],
