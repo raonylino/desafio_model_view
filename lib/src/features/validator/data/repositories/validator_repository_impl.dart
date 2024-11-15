@@ -27,4 +27,19 @@ class ValidatorRepositoryImpl implements ValidatorRepository {
       return Left(ServerException(message: e.toString()));
     }
   }
+  
+  @override
+  Future<Either<ValidatorException, ValidatorEntity>> getPassword() async {
+     try{
+       final password = await _datasource.getPassword();
+       return Right(password);
+     } on ServerException catch (e) {
+      return Left(ServerException(message: e.message));
+    } on ValidatorException catch (e) {
+      return Left(ValidatorException(message: e.message, errors: e.errors));
+    } catch (e) {
+      return Left(ServerException(message: e.toString()));
+    }
+
+  }
 }

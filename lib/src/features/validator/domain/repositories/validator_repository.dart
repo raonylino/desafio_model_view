@@ -5,4 +5,6 @@ import 'package:desafio_model_view/src/features/validator/domain/entities/valida
 
 abstract class ValidatorRepository {
   Future <Either<ValidatorException, ValidatorEntity>> call({required String password});
+
+  Future<Either<ValidatorException, ValidatorEntity>> getPassword();
 }

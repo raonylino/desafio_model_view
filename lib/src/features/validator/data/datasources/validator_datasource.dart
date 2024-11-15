@@ -5,4 +5,6 @@ abstract class ValidatorDatasource {
   
   Future<ValidatorModel> getValidator({required String password});
 
+  Future<ValidatorModel> getPassword();
+
 }

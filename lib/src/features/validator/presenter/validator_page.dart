@@ -212,7 +212,9 @@ class _ValidatorPageState extends State<ValidatorPage> {
                                         TextButton(
                                           onPressed: () {
                                             setState(() {
-                                              passwordEC.text = '12345678';
+                                              passwordEC.text = cubit
+                                                  .getPassword()
+                                                  .toString();
                                               obscureText = false;
                                             });
                                           },

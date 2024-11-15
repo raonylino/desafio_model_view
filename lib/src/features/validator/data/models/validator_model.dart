@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:desafio_model_view/src/features/validator/domain/entities/validator_entity.dart';
@@ -6,7 +5,6 @@ import 'package:desafio_model_view/src/features/validator/domain/entities/valida
 final class ValidatorModel extends ValidatorEntity {
   ValidatorModel({required super.id, required super.message});
 
-  
   ValidatorEntity copyWith({
     String? id,
     String? message,
@@ -33,7 +31,8 @@ final class ValidatorModel extends ValidatorEntity {
 
   String toJson() => json.encode(toMap());
 
-  factory ValidatorModel.fromJson(String source) => ValidatorModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ValidatorModel.fromJson(String source) =>
+      ValidatorModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() => 'ValidatorModel(id: $id, message: $message)';
@@ -41,14 +40,10 @@ final class ValidatorModel extends ValidatorEntity {
   @override
   bool operator ==(covariant ValidatorModel other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.id == id &&
-      other.message == message;
+
+    return other.id == id && other.message == message;
   }
 
   @override
   int get hashCode => id.hashCode ^ message.hashCode;
-
 }
-

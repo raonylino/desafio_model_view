@@ -34,6 +34,23 @@ class ValidatorCubit extends Cubit<ValidatorState> {
     );
   }
 
+  Future<void> getPassword() async {
+    emit(const ValidatorLoading());
+    var password = await _usecase.getPassword();
+
+    password.fold(
+      (l) {
+        emit(ValidatorServerError(message: l.message, errors: l.errors));
+        emit(const ValidatorInitial());
+      },
+      (r) {
+        emit(ValidatorSuccess(id: r.id, message: r.message));
+        emit(const ValidatorInitial());
+      },
+    );
+
+  }
+
   var usecase = ValidatorUsecaseImpl(
       validatorRepository:
           ValidatorRepositoryImpl(datasource: ValidatorDatasourceImpl()));

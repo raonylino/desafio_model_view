@@ -15,4 +15,8 @@ final class ValidatorUsecaseImpl implements ValidatorUsecase {
       {required String password}) {
     return _validatorRepository.call(password: password);
   }
+
+ Future<Either<ValidatorException, ValidatorEntity>> getPassword() {
+    return _validatorRepository.getPassword();
+ }
 }
