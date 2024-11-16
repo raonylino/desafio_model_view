@@ -1,4 +1,4 @@
-import 'package:desafio_model_view/src/constants/routes_assets.dart';
+import 'package:desafio_model_view/src/core/constants/routes_assets.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {

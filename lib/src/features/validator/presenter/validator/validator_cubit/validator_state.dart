@@ -29,3 +29,4 @@ final class ValidatorServerError extends ValidatorState {
   final List? errors;
   const ValidatorServerError({required this.message, this.errors});
 }
+

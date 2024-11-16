@@ -3,15 +3,15 @@
 import 'package:dartz/dartz.dart';
 
 import 'package:desafio_model_view/src/core/exceptions/validator_exceptions.dart';
-import 'package:desafio_model_view/src/features/validator/data/datasources/validator_datasource.dart';
+import 'package:desafio_model_view/src/features/validator/data/datasources/datasource.dart';
+import 'package:desafio_model_view/src/features/validator/domain/entities/password_entity.dart';
 import 'package:desafio_model_view/src/features/validator/domain/entities/validator_entity.dart';
-import 'package:desafio_model_view/src/features/validator/domain/repositories/validator_repository.dart';
+import 'package:desafio_model_view/src/features/validator/domain/repositories/repository.dart';
 
-class ValidatorRepositoryImpl implements ValidatorRepository {
-  final ValidatorDatasource _datasource;
+class RepositoryImpl implements Repository {
+  final Datasource _datasource;
 
-  ValidatorRepositoryImpl({required ValidatorDatasource datasource})
-      : _datasource = datasource;
+  RepositoryImpl({required Datasource datasource}) : _datasource = datasource;
 
   @override
   Future<Either<ValidatorException, ValidatorEntity>> call(
@@ -24,22 +24,21 @@ class ValidatorRepositoryImpl implements ValidatorRepository {
     } on ValidatorException catch (e) {
       return Left(ValidatorException(message: e.message, errors: e.errors));
     } catch (e) {
-      return Left(ServerException(message: e.toString()));
+      return Left(ServerException(message: 'Erro inesperado'));
     }
   }
-  
+
   @override
-  Future<Either<ValidatorException, ValidatorEntity>> getPassword() async {
-     try{
-       final password = await _datasource.getPassword();
-       return Right(password);
-     } on ServerException catch (e) {
+  Future<Either<ValidatorException, PasswordEntity>> getPassword() async {
+    try {
+      final password = await _datasource.getPassword();
+      return Right(password);
+    } on ServerException catch (e) {
       return Left(ServerException(message: e.message));
     } on ValidatorException catch (e) {
       return Left(ValidatorException(message: e.message, errors: e.errors));
     } catch (e) {
-      return Left(ServerException(message: e.toString()));
+      return Left(ServerException(message: 'Erro inesperado'));
     }
-
   }
 }
